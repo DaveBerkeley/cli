@@ -9,3 +9,6 @@ build_arm/
 tags
 html/
 latex/
+
+# Mac
+.DS_Store
