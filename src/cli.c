@@ -134,6 +134,10 @@ static bool execute(CLI *cli, CliCommand* cmd)
 
 const char* cli_get_arg(CLI *cli, int offset)
 {
+    if ((offset < 0) || ((cli->nest + offset) >= CLI_MAX_ARGS))
+    {
+        return 0;
+    }
     return cli->args[cli->nest + offset];
 }
 
