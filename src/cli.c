@@ -62,6 +62,7 @@ void cli_init(CLI *cli, size_t size, void *ctx)
     cli->size = size;
     cli->head = 0;
     cli->ctx = ctx;
+    cli->echo = true;
 
     cli_clear(cli);
 
@@ -430,7 +431,7 @@ static void cli_edit(CLI *cli, char c)
         {
             if (cli->cursor < cli->end)
             {
-                cli_print(cli, "%c", cli->buff[cli->cursor]);
+                if (cli->echo) cli_print(cli, "%c", cli->buff[cli->cursor]);
                 cli->cursor += 1;
             }
             break;
@@ -439,7 +440,7 @@ static void cli_edit(CLI *cli, char c)
         {
             if (cli->cursor > 0)
             {
-                cli_print(cli, "\b");
+                if (cli->echo) cli_print(cli, "\b");
                 cli->cursor -= 1;
             }
             break;
@@ -466,8 +467,11 @@ static void cli_backspace(CLI *cli)
     cli->buff[cli->end] = '\0';
     cli->cursor -= 1;
     // overwrite the deleted char
-    cli_print(cli, " \b");
-    cli_draw_to_end(cli);
+    if (cli->echo)
+    {
+        cli_print(cli, " \b");
+        cli_draw_to_end(cli);
+    }
 }
 
     /**
@@ -480,7 +484,7 @@ void cli_process(CLI *cli, char c)
     {
         //  line is full : ERROR
         cli_clear(cli);
-        cli_print(cli, "%s%s", cli->eol, cli->prompt);
+        if (cli->echo) cli_print(cli, "%s%s", cli->eol, cli->prompt);
         return;
     }
 
@@ -505,7 +509,7 @@ void cli_process(CLI *cli, char c)
     }
 
     // Echo the char
-    cli_print(cli, "%c", c);
+    if (cli->echo) cli_print(cli, "%c", c);
 
     // Just ignore carriage return
     if (c == '\r')

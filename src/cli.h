@@ -42,6 +42,7 @@ typedef struct CLI {
     size_t end;
     size_t cursor;
     bool escape;
+    bool echo;
 
     CliCommand *head;
     CliOutput *output;

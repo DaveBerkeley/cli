@@ -386,6 +386,7 @@ TEST(CLI, Power)
         .subcommand = & s0,
     };
 
+    laser_value = 0;
     cli_init(& cli, 64, 0);
     cli_register(& cli, & a0);
 
@@ -410,6 +411,7 @@ TEST(CLI, Power)
     EXPECT_STREQ("power laser 10\r\nok\r\n> ", io.get());
     EXPECT_EQ(10, laser_value); 
 
+    io.reset();
     cli_close(& cli);
 }
 
@@ -1351,6 +1353,81 @@ TEST(CLI, ParseFloat)
         ok = cli_parse_float(d->text, & value);
         EXPECT_FALSE(ok);
     }
+}
+
+    /*
+     *
+     */
+
+static void echo_cmd(CLI *cli, CliCommand *cmd)
+{
+    cli_print(cli, "%s", cmd->cmd);
+
+    for (int i = 0; i < CLI_MAX_ARGS; i++)
+    {
+        const char *s = cli_get_arg(cli, i);
+        if (!s)
+        {
+            break;
+        }
+
+        cli_print(cli, " %s", s);
+    }
+
+    cli_print(cli, "%s", cli->eol);
+}
+
+TEST(CLI, Echo)
+{
+    io.reset();
+
+    CliCommand hello = {
+        .cmd = "hello",
+        .handler = echo_cmd,
+    };
+
+    cli_init(& cli, 64, 0);
+    cli_register(& cli, & hello);
+
+    // Normal case (echo enabled)
+
+    // initial prompt
+    EXPECT_STREQ("> ", io.get());
+    io.reset();
+
+    cli_send(& cli, "hello world");
+    EXPECT_STREQ("hello world", io.get());
+    io.reset();
+ 
+    cli_send(& cli, "\n");
+    EXPECT_STREQ("\nhello world\r\n> ", io.get());
+    io.reset();
+
+    // test with echo off 
+    cli.echo = false;
+
+    cli_send(& cli, "hello world");
+    EXPECT_STREQ("", io.get());
+    io.reset();
+
+    // backspace over " world"
+    cli_send(& cli, "\b\b\b\b\b\b");
+    EXPECT_STREQ("", io.get());
+    io.reset();
+
+    cli_send(& cli, "\n");
+    EXPECT_STREQ("hello\r\n> ", io.get());
+    io.reset();
+
+    cli_send(& cli, "hello world");
+    EXPECT_STREQ("", io.get());
+    io.reset();
+
+    cli_send(& cli, " more args\n");
+    EXPECT_STREQ("hello world more args\r\n> ", io.get());
+    io.reset();
+
+    cli_close(& cli);
 }
 
 //  FIN
