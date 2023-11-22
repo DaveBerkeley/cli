@@ -9,6 +9,9 @@
 
 #if defined(__cplusplus)
 extern "C" {
+#define MUTEX Mutex
+#else
+#define MUTEX struct Mutex
 #endif 
     
 struct ListItem;
@@ -17,23 +20,23 @@ typedef struct ListItem *pList;
 
 typedef pList* (*pnext)(pList item);
 
-void list_push(pList *head, pList w, pnext next_fn, struct Mutex *mutex);
-void list_append(pList *head, pList w, pnext next_fn, struct Mutex *mutex);
-bool list_remove(pList *head, pList w, pnext next_fn, struct Mutex *mutex);
-int list_size(pList *head, pnext next_fn, struct Mutex *mutex);
+void list_push(pList *head, pList w, pnext next_fn, MUTEX *mutex);
+void list_append(pList *head, pList w, pnext next_fn, MUTEX *mutex);
+bool list_remove(pList *head, pList w, pnext next_fn, MUTEX *mutex);
+int list_size(pList *head, pnext next_fn, MUTEX *mutex);
 
-pList list_pop(pList *head, pnext next_fn, struct Mutex *mutex);
+pList list_pop(pList *head, pnext next_fn, MUTEX *mutex);
 
 typedef int (*cmp_fn)(const pList w1, const pList w2);
 
-void list_add_sorted(pList *head, pList w, pnext next_fn, cmp_fn cmp, struct Mutex *mutex);
+void list_add_sorted(pList *head, pList w, pnext next_fn, cmp_fn cmp, MUTEX *mutex);
 
-bool list_has(pList *head, pList w, pnext next_fn, struct Mutex *mutex);
+bool list_has(pList *head, pList w, pnext next_fn, MUTEX *mutex);
 
 typedef int (*visitor)(pList w, void *arg);
 
-pList  list_find(pList *head, pnext next_fn, visitor fn, void *arg, struct Mutex *mutex);
-void list_visit(pList *head, pnext next_fn, visitor fn, void *arg, struct Mutex *mutex);
+pList  list_find(pList *head, pnext next_fn, visitor fn, void *arg, MUTEX *mutex);
+void list_visit(pList *head, pnext next_fn, visitor fn, void *arg, MUTEX *mutex);
 
 #if defined(__cplusplus)
 }
