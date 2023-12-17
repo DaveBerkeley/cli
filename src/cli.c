@@ -128,8 +128,10 @@ static void not_found(CLI *cli, const char *cmd)
 
 static bool execute(CLI *cli, CliCommand* cmd)
 {
-    ASSERT(cmd->handler);
-    cmd->handler(cli, cmd);
+    if (cmd->handler)
+    {
+        cmd->handler(cli, cmd);
+    }
     return true;
 }
 
