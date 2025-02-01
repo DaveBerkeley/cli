@@ -1304,6 +1304,77 @@ TEST(CLI, ParseInt)
      *
      */
 
+TEST(CLI, ParseLong)
+{
+    // Test :
+    //bool cli_parse_long(const char *s, long *value, int base);
+
+    long value;
+    bool ok;
+
+    ok = cli_parse_long("1234", & value, 10);
+    EXPECT_TRUE(ok);
+    EXPECT_EQ(1234, value);
+
+    ok = cli_parse_long("-1234", & value, 10);
+    EXPECT_TRUE(ok);
+    EXPECT_EQ(-1234, value);
+
+    ok = cli_parse_long("0", & value, 10);
+    EXPECT_TRUE(ok);
+    EXPECT_EQ(0, value);
+
+    ok = cli_parse_long("", & value, 10);
+    EXPECT_FALSE(ok);
+
+    ok = cli_parse_long(0, & value, 10);
+    EXPECT_FALSE(ok);
+
+    // leading space is okay
+    ok = cli_parse_long("  123", & value, 10);
+    EXPECT_TRUE(ok);
+    EXPECT_EQ(123, value);
+
+    // trailing space is not
+    ok = cli_parse_long("123 ", & value, 10);
+    EXPECT_FALSE(ok);
+
+    // floats should fail
+    ok = cli_parse_long("12.34", & value, 10);
+    EXPECT_FALSE(ok);
+
+    // strings should fail
+    ok = cli_parse_long("hello123", & value, 10);
+    EXPECT_FALSE(ok);
+
+    // strings should fail
+    ok = cli_parse_long("123hello", & value, 10);
+    EXPECT_FALSE(ok);
+
+    // Hex works
+    ok = cli_parse_long("0x1234", & value, 16);
+    EXPECT_TRUE(ok);
+    EXPECT_EQ(0x1234, value);
+
+    // Hex works
+    ok = cli_parse_long("0X1234", & value, 16);
+    EXPECT_TRUE(ok);
+    EXPECT_EQ(0x1234, value);
+
+    // Hex works : without the leading 0x
+    ok = cli_parse_long("1234", & value, 16);
+    EXPECT_TRUE(ok);
+    EXPECT_EQ(0x1234, value);
+
+    ok = cli_parse_long("0xffffffff", & value, 0);
+    EXPECT_TRUE(ok);
+    EXPECT_EQ(0xffffffff, value);
+}
+
+    /*
+     *
+     */
+
 TEST(CLI, ParseFloat)
 {
     float value;

@@ -60,6 +60,7 @@ void cli_init(CLI *cli, size_t size, void *ctx);
 void cli_close(CLI *cli);
 
 void cli_register(CLI *cli, CliCommand *cmd);
+void cli_append(CLI *cli, CliCommand *cmd);
 void cli_insert(CLI *cli, CliCommand **head, CliCommand *cmd);
 void cli_process(CLI *cli, char c);
 
@@ -76,6 +77,7 @@ void cli_nowt(CLI *cli, CliCommand *cmd);
 const char* cli_get_arg(CLI *cli, int offset);
 
 bool cli_parse_int(const char *s, int *value, int base);
+bool cli_parse_long(const char *s, long *value, int base);
 bool cli_parse_float(const char *s, float *value);
 
 // helper commands for list manipulation

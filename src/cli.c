@@ -76,6 +76,14 @@ void cli_insert(CLI *cli, CliCommand **head, CliCommand *cmd)
     list_push((pList*) head, (pList) cmd, next_fn, cli->mutex);
 }
 
+void cli_append(CLI *cli, CliCommand *cmd)
+{
+    CliCommand **head = & cli->head;
+    for ( ; *head; head = &((*head)->next))
+        ;
+    cli_insert(cli, head, cmd);
+} 
+
     /**
      * @brief Inserts command \a cmd at the head of the command list
      *
@@ -590,6 +598,35 @@ bool cli_parse_int(const char *s, int *value, int base)
     if ('\0' == *end)
     {
         *value = (int) val;
+        return true;
+    }
+
+    return false;
+}
+
+    /*
+     *
+     */
+
+bool cli_parse_long(const char *s, long *value, int base)
+{
+    if (!s)
+    {
+        return false;
+    }
+
+    if ('\0' == *s)
+    {
+        // nothing in the string
+        return false;
+    }
+
+    char *end = 0;
+    long long val = strtoll(s, & end, base);
+    ASSERT(end);
+    if ('\0' == *end)
+    {
+        *value = (long) val;
         return true;
     }
 
