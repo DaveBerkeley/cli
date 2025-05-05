@@ -8,12 +8,6 @@
   #define __has_attribute(x) 0  
 #endif
 
-#if __has_attribute(no_sanitize)
-#define NO_SANITIZE_UNDEFINED __attribute__ ((no_sanitize ("undefined")))
-#else
-#define NO_SANITIZE_UNDEFINED
-#endif
-
 static void _list_insert(pList* head, pList w, pList *next)
 {
     ASSERT(head);
@@ -34,7 +28,7 @@ static void _list_insert(pList* head, pList w, pList *next)
      * @return number of items in the list
      */
 
-int NO_SANITIZE_UNDEFINED list_size(pList *head, pnext next_fn, Mutex *mutex)
+int list_size(pList *head, pnext next_fn, Mutex *mutex)
 {
     ASSERT(head);
     ASSERT(next_fn);
@@ -60,7 +54,7 @@ int NO_SANITIZE_UNDEFINED list_size(pList *head, pnext next_fn, Mutex *mutex)
  * @param mutex optional
  */
 
-void NO_SANITIZE_UNDEFINED list_push(pList *head, pList w, pnext next_fn, Mutex *mutex)
+void list_push(pList *head, pList w, pnext next_fn, Mutex *mutex)
 {
     ASSERT(head);
     ASSERT(w);
@@ -80,7 +74,7 @@ void NO_SANITIZE_UNDEFINED list_push(pList *head, pList w, pnext next_fn, Mutex 
  * @param mutex optional
  */
 
-void NO_SANITIZE_UNDEFINED list_append(pList *head, pList w, pnext next_fn, Mutex *mutex)
+void list_append(pList *head, pList w, pnext next_fn, Mutex *mutex)
 {
     ASSERT(head);
     ASSERT(w);
@@ -106,7 +100,7 @@ void NO_SANITIZE_UNDEFINED list_append(pList *head, pList w, pnext next_fn, Mute
  * @param mutex optional
  */
 
-void NO_SANITIZE_UNDEFINED list_add_sorted(pList *head, pList w, pnext next_fn, cmp_fn cmp, Mutex *mutex)
+void list_add_sorted(pList *head, pList w, pnext next_fn, cmp_fn cmp, Mutex *mutex)
 {
     ASSERT(head);
     ASSERT(w);
@@ -134,7 +128,7 @@ void NO_SANITIZE_UNDEFINED list_add_sorted(pList *head, pList w, pnext next_fn, 
  * @param mutex optional
  */
 
-pList NO_SANITIZE_UNDEFINED list_pop(pList *head, pnext next_fn, Mutex *mutex)
+pList list_pop(pList *head, pnext next_fn, Mutex *mutex)
 {
     ASSERT(head);
     ASSERT(next_fn);
@@ -164,7 +158,7 @@ pList NO_SANITIZE_UNDEFINED list_pop(pList *head, pnext next_fn, Mutex *mutex)
  * @return true if item was removed
  */
 
-bool NO_SANITIZE_UNDEFINED list_remove(pList *head, pList w, pnext next_fn, Mutex *mutex)
+bool list_remove(pList *head, pList w, pnext next_fn, Mutex *mutex)
 {
     ASSERT(head);
     ASSERT(w);
@@ -199,7 +193,7 @@ bool NO_SANITIZE_UNDEFINED list_remove(pList *head, pList w, pnext next_fn, Mute
  * @return true if item found
  */
 
-bool NO_SANITIZE_UNDEFINED list_has(pList *head, pList w, pnext next_fn, Mutex *mutex)
+bool list_has(pList *head, pList w, pnext next_fn, Mutex *mutex)
 {
     ASSERT(head);
     ASSERT(next_fn);
@@ -230,7 +224,7 @@ bool NO_SANITIZE_UNDEFINED list_has(pList *head, pList w, pnext next_fn, Mutex *
  * @return the found item or null
  */
 
-pList NO_SANITIZE_UNDEFINED list_find(pList *head, pnext next_fn, visitor fn, void *arg, Mutex *mutex)
+pList list_find(pList *head, pnext next_fn, visitor fn, void *arg, Mutex *mutex)
 {
     ASSERT(head);
     ASSERT(next_fn);
@@ -262,7 +256,7 @@ pList NO_SANITIZE_UNDEFINED list_find(pList *head, pnext next_fn, visitor fn, vo
  * @param mutex optional
  */
 
-void NO_SANITIZE_UNDEFINED list_visit(pList *head, pnext next_fn, visitor fn, void *arg, Mutex *mutex)
+void list_visit(pList *head, pnext next_fn, visitor fn, void *arg, Mutex *mutex)
 {
     list_find(head, next_fn, fn, arg, mutex);
 }
