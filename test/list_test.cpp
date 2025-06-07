@@ -8,6 +8,10 @@
 
 #include "../src/list.h"
 
+#if defined(CLI_NS)
+using namespace CLI_NS;
+#endif
+
 typedef struct Item
 {
     struct Item *next;

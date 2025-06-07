@@ -11,7 +11,7 @@ test_files = [
 ]
 
 files = [
-    '../src/cli.c',
+    '../src/cli.cpp',
     '../src/debug.c',
     '../src/list.cpp',
 ] + test_files
@@ -33,6 +33,7 @@ cflags = [
 
     '-g',
     '-DGOOGLETEST',
+    '-DCLI_NS=cls_ns',
     '-Isrc',
 ]
 

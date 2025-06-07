@@ -7,6 +7,10 @@
 #include "list.h"
 #include "cli.h"
 
+#if defined(CLI_NS)
+using namespace CLI_NS;
+#endif
+
 static pList* next_fn(pList item)
 {
     CliCommand *cmd = (CliCommand *) item;

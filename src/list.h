@@ -8,11 +8,20 @@
 #include <cli_mutex.h>
 
 #if defined(__cplusplus)
-extern "C" {
-#define MUTEX Mutex
+
+#if defined CLI_NS
+namespace CLI_NS {
 #else
+extern "C" {
+#endif
+
+#define MUTEX Mutex
+
+#else
+
 #define MUTEX struct Mutex
-#endif 
+
+#endif  // else defined(__cplusplus)
     
 struct ListItem;
 
@@ -39,7 +48,9 @@ pList  list_find(pList *head, pnext next_fn, visitor fn, void *arg, MUTEX *mutex
 void list_visit(pList *head, pnext next_fn, visitor fn, void *arg, MUTEX *mutex);
 
 #if defined(__cplusplus)
-}
+#if !defined(CLI_NS)
+} // extern "C"
+#endif
 #endif 
 
 #if defined(__cplusplus)
@@ -109,6 +120,10 @@ public:
         list_visit((pList *) & head, (pnext) next_fn, (visitor) fn, arg, mutex);
     }
 };
+
+#if defined(CLI_NS)
+} // namespace cli 
+#endif
 
 #endif // __cplusplus
 

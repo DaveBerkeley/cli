@@ -4,6 +4,10 @@
 
 #include "list.h"
 
+#if defined(CLI_NS)
+namespace CLI_NS {
+#endif
+
 #ifndef __has_attribute         
   #define __has_attribute(x) 0  
 #endif
@@ -260,5 +264,9 @@ void list_visit(pList *head, pnext next_fn, visitor fn, void *arg, Mutex *mutex)
 {
     list_find(head, next_fn, fn, arg, mutex);
 }
+
+#if defined(CLI_NS)
+} // namespace cli
+#endif
 
 //  FIN
