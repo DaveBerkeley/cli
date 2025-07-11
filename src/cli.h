@@ -1,19 +1,17 @@
 
-#if !defined(__CLI_H__)
-
-#define __CLI_H__
+#pragma once
 
 #include <stdio.h>
 #include <stdarg.h>
 
 #include "io.h"
+#include "list.h"
 
 #if defined(__cplusplus)
 extern "C" {
 #endif
 
 struct CLI;
-struct Mutex;
 
 typedef struct CliCommand {
     const char *cmd;
@@ -48,7 +46,7 @@ typedef struct CLI {
     CliOutput *output;
     const char* prompt;
     const char* eol;
-    struct Mutex *mutex; // can be null
+    MUTEX *mutex; // can be null
     void *ctx; // context
 
     // used by cli_execute to break input into parts
@@ -88,6 +86,5 @@ CliCommand *cli_find(CliCommand **head, int (*fn)(CliCommand *cmd, void *arg), v
 #if defined(__cplusplus)
 }
 #endif
-#endif  //  __CLI_H__
 
 //  FIN
