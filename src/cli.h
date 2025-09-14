@@ -26,7 +26,9 @@ typedef struct CliCommand {
     struct CliCommand *next;
 }   CliCommand;
 
+#if !defined(CLI_MAX_ARGS)
 #define CLI_MAX_ARGS 8
+#endif
 
 typedef struct
 {
