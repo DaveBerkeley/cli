@@ -50,6 +50,8 @@ typedef struct CLI {
     const char* eol;
     MUTEX *mutex; // can be null
     void *ctx; // context
+    void (*capture)(CLI *cli, char c);
+    void *capture_ctx;
 
     // used by cli_execute to break input into parts
     const char *args[CLI_MAX_ARGS];
@@ -63,6 +65,7 @@ void cli_register(CLI *cli, CliCommand *cmd);
 void cli_append(CLI *cli, CliCommand *cmd);
 void cli_insert(CLI *cli, CliCommand **head, CliCommand *cmd);
 void cli_process(CLI *cli, char c);
+void cli_capture(CLI *cli, void (*fn)(CLI *cli, char c), void *ctx);
 
 void cli_print(CLI *cli, const char *fmt, ...) __attribute__((format(printf,2,3)));
 void cli_clear(CLI *cli);

@@ -1501,4 +1501,106 @@ TEST(CLI, Echo)
     cli_close(& cli);
 }
 
+    /*
+     *
+     */
+
+class Capture
+{
+    CLI *cli;
+    char last;
+    size_t chunk;
+    size_t size;
+public:
+    char *data;
+    size_t idx;
+
+    Capture(CLI *_cli, size_t init_size=64)
+    :   cli(_cli), 
+        last(0),
+        chunk(init_size),
+        size(init_size),
+        data(0),
+        idx(0)
+    {
+        //LOG_DEBUG("Capture()");
+        data = (char*) malloc(size);
+        ASSERT(data);
+    }
+
+    ~Capture()
+    {
+        free(data);
+        //LOG_DEBUG("~Capture()");
+    }
+
+    bool process(char c)
+    {
+        // save c in data
+        data[idx++] = c;
+        if (idx == size)
+        {
+            // we've run out of space, so realloc
+            data = (char*) realloc(data, size + chunk);
+            ASSERT(data); 
+        }
+
+        const bool done = (c == '\n') && (last == '\n');
+        last = c;
+        return !done;
+    }
+};
+
+static void captured(CLI *cli, char c)
+{
+    Capture *cap = (Capture *) cli->capture_ctx;
+    ASSERT(cap);
+    if (cap->process(c))
+    {
+        return;
+    }
+    // on captured ...
+    char fmt[24];
+    snprintf(fmt, sizeof(fmt), "%%%ds", (int) cap->idx);
+    cli_print(cli, fmt, cap->data);
+
+    // end capture
+    //LOG_DEBUG("end capture");
+    cli_capture(cli, 0, 0);
+    delete cap;
+    return;
+}
+
+static void capture_cmd(CLI *cli, CliCommand *)
+{
+    cli_capture(cli, captured, new Capture(cli));
+}
+
+TEST(CLI, Capture)
+{
+    io.reset();
+
+    CliCommand capture = {
+        .cmd = "capture",
+        .handler = capture_cmd,
+    };
+
+    cli_init(& cli, 64, 0);
+    cli_register(& cli, & capture);
+
+    cli_send(& cli, "capture\n");
+    EXPECT_STREQ("> capture\n> ", io.get());
+    io.reset();
+
+    const char *data = "one\ntwo\nthree\n\n";
+
+    cli_send(& cli, data);
+    EXPECT_STREQ(data, io.get());
+    io.reset();
+ 
+    cli_send(& cli, "help\n");
+    EXPECT_STREQ("help\n'help' not found\r\n> ", io.get());
+    io.reset();
+}
+
 //  FIN

@@ -67,11 +67,19 @@ void cli_init(CLI *cli, size_t size, void *ctx)
     cli->head = 0;
     cli->ctx = ctx;
     cli->echo = true;
+    cli->capture = 0;
+    cli->capture_ctx = 0;
 
     cli_clear(cli);
 
     // Start with the initial prompt
     cli_print(cli, "%s", cli->prompt);
+}
+
+void cli_capture(CLI *cli, void (*fn)(CLI *, char), void *ctx)
+{
+    cli->capture = fn;
+    cli->capture_ctx = ctx;
 }
 
 void cli_insert(CLI *cli, CliCommand **head, CliCommand *cmd)
@@ -494,6 +502,11 @@ static void cli_backspace(CLI *cli)
 
 void cli_process(CLI *cli, char c)
 {
+    if (cli->capture)
+    {
+        cli->capture(cli, c);
+        return;
+    }
     if (((size_t)(cli->end + 1)) >= cli->size)
     {
         //  line is full : ERROR
