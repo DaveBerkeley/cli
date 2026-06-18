@@ -1507,7 +1507,6 @@ TEST(CLI, Echo)
 
 class Capture
 {
-    CLI *cli;
     char last;
     size_t chunk;
     size_t size;
@@ -1515,9 +1514,8 @@ public:
     char *data;
     size_t idx;
 
-    Capture(CLI *_cli, size_t init_size=64)
-    :   cli(_cli), 
-        last(0),
+    Capture(size_t init_size=64)
+    :   last(0),
         chunk(init_size),
         size(init_size),
         data(0),
@@ -1526,6 +1524,7 @@ public:
         //LOG_DEBUG("Capture()");
         data = (char*) malloc(size);
         ASSERT(data);
+        memset(data, 0, size);
     }
 
     ~Capture()
@@ -1543,6 +1542,8 @@ public:
             // we've run out of space, so realloc
             data = (char*) realloc(data, size + chunk);
             ASSERT(data); 
+            memset(& data[size], 0, chunk);
+            size += chunk;
         }
 
         const bool done = (c == '\n') && (last == '\n');
@@ -1573,7 +1574,7 @@ static void captured(CLI *cli, char c)
 
 static void capture_cmd(CLI *cli, CliCommand *)
 {
-    cli_capture(cli, captured, new Capture(cli));
+    cli_capture(cli, captured, new Capture());
 }
 
 TEST(CLI, Capture)
@@ -1601,6 +1602,7 @@ TEST(CLI, Capture)
     cli_send(& cli, "help\n");
     EXPECT_STREQ("help\n'help' not found\r\n> ", io.get());
     io.reset();
+    cli_close(& cli);
 }
 
 //  FIN
