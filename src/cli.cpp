@@ -377,7 +377,7 @@ static int visit_auto(pList w, void *arg)
 static void cli_autocomplete(CLI *cli)
 {
     // Check for partial match of command handlers
-    struct autocomplete ac = { .cli = cli, .complete = 0, .offset = 0, .print = false };
+    struct autocomplete ac = { .cli = cli };
 
     CliCommand **head = & cli->head;
 

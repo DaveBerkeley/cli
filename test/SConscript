@@ -24,6 +24,7 @@ libs = [
 cflags = [
     '-Wall',
     '-Wextra',
+    '-Werror',
     '-Wswitch-default',
     '-Wswitch-enum',
     '-Wconversion',
@@ -41,7 +42,29 @@ cxxflags = [
     '-std=c++14',
 ]
 
-env = Environment(CCFLAGS=cflags, CXXFLAGS=cxxflags)
+lflags = [
+    #'-lgtest_main',
+    '-lgtest',
+    '-lpthread',
+]
+
+import os
+environ = os.environ
+cc = environ.get('CC', 'gcc')
+cxx = environ.get('CXX', 'g++')
+
+if cc == 'clang':
+    sane = [
+        '-fsanitize=thread',
+        '-fsanitize=alignment',
+        '-fno-sanitize-recover=all',
+    ]
+    for x in sane:
+        cflags  += [ x ]
+        cxxflags += [ x ]
+        lflags  += [ x ]
+
+env = Environment(CCFLAGS=cflags, CXXFLAGS=cxxflags, LINKFLAGS=lflags, CC=cc, CXX=cxx)
 tdd = env.Program(target='tdd', source=files, LIBS=libs)
 
 env.Alias('tdd', tdd)
